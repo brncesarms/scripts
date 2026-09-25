@@ -19,7 +19,11 @@ Este repositório reúne ferramentas determinísticas e scripts utilitários des
 
 ```text
 ~/scripts/
-├── bash/               # Automações Linux, redes, backups, monitoramento e SSH
+├── bash/               # Scripts atômicos para Linux (Omarchy, Arch, Fedora, Debian/Ubuntu)
+│   ├── system/         # OpenSSH, atualização geral, mDNS/Avahi, fontes e Flatpak
+│   ├── dev/            # Base dev, Docker, Distrobox, Homebrew, IDEs, AGY e OpenCode
+│   ├── apps/           # Navegadores (Brave) e monitores de hardware (btop)
+│   ├── lib/            # Helpers de detecção multi-distro e permissões
 │   └── synclab.sh      # Utilitário determinístico de sincronização da Tríade Omarchy
 ├── python/             # Utilitários de dados, RAG semântico, consumo de APIs e IA
 │   ├── curador_obsidian.py   # Auditoria, sanitização e links da base Obsidian

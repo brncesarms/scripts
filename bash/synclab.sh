@@ -18,6 +18,7 @@ C_BLUE="\033[34m"
 C_MAGENTA="\033[35m"
 
 HOSTNAME_CURRENT=$(hostname)
+ARCHIMEDES_DIR="$HOME/archimedes"
 SCRIPTS_DIR="$HOME/scripts"
 OBSIDIAN_DIR="$HOME/obsidian"
 
@@ -64,14 +65,21 @@ sync_repo() {
 
 # 1. Sincronização Local
 sync_local() {
-    echo -e "${C_BOLD}${C_BLUE}📦 1. Sincronizando Repositório de Scripts (~/scripts)...${C_RESET}"
+    echo -e "${C_BOLD}${C_BLUE}🏛️ 1. Sincronizando Archimedes Core (~/archimedes)...${C_RESET}"
+    if [ -d "$ARCHIMEDES_DIR" ]; then
+        sync_repo "$ARCHIMEDES_DIR"
+    else
+        echo -e "  ${C_YELLOW}⚠️ Diretório ~/archimedes não encontrado!${C_RESET}"
+    fi
+
+    echo -e "\n${C_BOLD}${C_BLUE}📦 2. Sincronizando Repositório de Scripts (~/scripts)...${C_RESET}"
     if [ -d "$SCRIPTS_DIR" ]; then
         sync_repo "$SCRIPTS_DIR"
     else
         echo -e "  ${C_RED}❌ Diretório ~/scripts não encontrado!${C_RESET}"
     fi
 
-    echo -e "\n${C_BOLD}${C_BLUE}📝 2. Sincronizando Cofres do Obsidian (~/obsidian)...${C_RESET}"
+    echo -e "\n${C_BOLD}${C_BLUE}📝 3. Sincronizando Cofres do Obsidian (~/obsidian)...${C_RESET}"
     if [ -d "$OBSIDIAN_DIR" ]; then
         for repo in "$OBSIDIAN_DIR"/*; do
             if [ -d "$repo" ] && [ -d "$repo/.git" ]; then

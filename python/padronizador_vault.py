@@ -14,7 +14,7 @@ import subprocess
 from pathlib import Path
 
 OBSIDIAN_BASE = "/home/brn/obsidian"
-DEFAULT_AUTHOR = "Bruno César / Antigravity"
+DEFAULT_AUTHOR = "Bruno César"
 
 VAULT_RENAMES = {
     "windows": {

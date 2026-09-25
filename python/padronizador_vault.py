@@ -41,6 +41,10 @@ VAULT_RENAMES = {
         "automatic_reboot.md": "14_automatic_reboot.md",
         "01_básico_para_proteger_seu_mikrotik.md": "01_basico_para_proteger_seu_mikrotik.md",
         "01_exemplo_sumarização_ospf.md": "01_exemplo_sumarizacao_ospf.md"
+    },
+    "ia": {
+        "benchmark-moe-geekom.md": "01_benchmark_modelos_moe_geekom.md",
+        "ranking-geral-modelos.md": "02_ranking_geral_modelos_llm.md"
     }
 }
 

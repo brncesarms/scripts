@@ -19,9 +19,16 @@ Este repositório reúne ferramentas determinísticas e scripts utilitários des
 
 ```text
 ~/scripts/
-├── bash/          # Automações Linux, redes, backups, monitoramento e SSH
-├── python/        # Utilitários de dados, RAG semântico, consumo de APIs e IA
-└── powershell/    # Scripts de automação Windows, diagnóstico de rede e Winget
+├── bash/               # Automações Linux, redes, backups, monitoramento e SSH
+│   └── synclab.sh      # Utilitário determinístico de sincronização da Tríade Omarchy
+├── python/             # Utilitários de dados, RAG semântico, consumo de APIs e IA
+│   ├── curador_obsidian.py   # Auditoria, sanitização e links da base Obsidian
+│   └── padronizador_vault.py # Formatação de frontmatter e privacidade de notas
+└── powershell/         # Scripts atômicos para Windows 11, automação e redes
+    ├── system/         # OpenSSH, reparos de integridade (DISM/SFC), tweaks, GPO e contas
+    ├── network/        # Renovação de TCP/IP, flush DNS/ARP e reset de adaptadores
+    ├── apps/           # Utilitários Winget, perfis corporativos (Modo PMA / Modo Dev)
+    └── runtimes/       # Provisionamento de .NET 8/9, VC++ All-in-One e Java Temurin
 ```
 
 ---
@@ -31,3 +38,4 @@ Para invocar qualquer script de qualquer lugar do terminal:
 ```bash
 export PATH="$HOME/scripts/bash:$HOME/scripts/python:$HOME/scripts/powershell:$PATH"
 ```
+

@@ -107,7 +107,7 @@ sync_remote_node() {
     fi
 
     echo -e "  Conectado via ${C_CYAN}${target_ip}${C_RESET}. Disparando synclab..."
-    ssh -o ConnectTimeout=5 "brn@${target_ip}" "bash -s" < "$0" --local
+    ssh -o ConnectTimeout=5 "brn@${target_ip}" "/home/brn/scripts/bash/synclab.sh --local"
     echo -e "  ${C_GREEN}✓ Nó ${node_name} sincronizado com sucesso!${C_RESET}\n"
 }
 

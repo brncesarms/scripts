@@ -42,9 +42,9 @@ printf '%b========================================================%b\n\n' "$C_CY
 
 case "$PKG_MGR" in
     apt)
-        apt-get update -y
-        DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
-        apt-get autoremove -y >/dev/null 2>&1 || true
+        apt update -y
+        DEBIAN_FRONTEND=noninteractive apt upgrade -y
+        apt autoremove -y >/dev/null 2>&1 || true
         ;;
     dnf)
         dnf upgrade -y

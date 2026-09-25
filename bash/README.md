@@ -22,7 +22,7 @@ Os scripts deste módulo seguem rigorosamente a política de **Scripts Atômicos
 ### 🛠️ Sistema & Rede (`bash/system/`)
 | Script | Descrição | Requer Sudo |
 | :--- | :--- | :---: |
-| `update_system.sh` | Atualização geral do sistema com auto-detecção da distro (`pacman -Syu`, `dnf upgrade`, `apt-get upgrade`). | Sim |
+| `update_system.sh` | Atualização geral do sistema com auto-detecção da distro (`pacman -Syu`, `dnf upgrade`, `apt upgrade`). | Sim |
 | `enable_openssh.sh` | Instala OpenSSH Server, ativa inicialização no boot, libera Firewall (UFW/firewalld) e injeta chaves autorizadas da Tríade. | Sim |
 | `enable_mdns_avahi.sh` | Configura o Avahi Daemon para resolução de nomes em rede local (`<hostname>.local`). | Sim |
 | `install_nerdfont.sh` | Baixa e instala a fonte JetBrainsMono Nerd Font em `/usr/local/share/fonts/NerdFonts` e atualiza o cache (`fc-cache`). | Sim |

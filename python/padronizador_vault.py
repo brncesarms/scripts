@@ -28,16 +28,36 @@ def get_vault_path(vault_input: str) -> Path:
     
     raise ValueError(f"Vault não encontrado: {vault_input} (nem como caminho absoluto nem em {OBSIDIAN_BASE})")
 
-def normalize_filename(old_name: str) -> str:
-    """Padroniza arquivos com prefixo de 1 dígito (ex: 1_foo.md -> 01_foo.md)."""
-    m = re.match(r"^([0-9])_([a-zA-Z0-9_\-]+)\.md$", old_name)
+VAULT_RENAMES = {
+    "windows": {
+        "ssh-remoto-configuracao.md": "20_ssh_remoto_configuracao.md"
+    },
+    "linux": {
+        "1-atualizar-pacotes.md": "01_atualizar_pacotes.md",
+        "omarchy--pos-instalacao.md": "02_omarchy_pos_instalacao.md",
+        "fedora--pos-instalacao.md": "03_fedora_pos_instalacao.md",
+        "containers--distrobox-docker-v2.md": "04_containers_distrobox_docker.md",
+        "virtualizacao--virt-manager.md": "05_virtualizacao_virt_manager.md",
+        "virtualizacao--win11-kvm.md": "06_virtualizacao_win11_kvm.md",
+        "nmcli--wifi-obsidian.md": "07_wifi_varredura_canais_nmcli.md",
+        "ffmpeg.md": "08_ffmpeg_nvenc_transcodificacao.md",
+        "ollama-gpu-igpu-radeon.md": "09_ollama_igpu_radeon_rocm.md",
+        "homebrew.md": "10_homebrew_gerenciador_pacotes.md",
+        "git.md": "11_git_instalacao_configuracao.md"
+    }
+}
+
+def normalize_filename(vault_name: str, old_name: str) -> str:
+    """Padroniza arquivos com prefixo de 1 dígito ou mapa de taxonomia do vault."""
+    # 1. Mapa explícito por vault
+    if vault_name in VAULT_RENAMES and old_name in VAULT_RENAMES[vault_name]:
+        return VAULT_RENAMES[vault_name][old_name]
+    
+    # 2. Padrão 1_foo.md ou 1-foo.md -> 01_foo.md
+    m = re.match(r"^([0-9])[-_]([a-zA-Z0-9_\-]+)\.md$", old_name)
     if m:
         digit, rest = m.groups()
         return f"0{digit}_{rest}.md"
-    
-    # Caso especial específico de notas legadas conhecidas
-    if old_name == "ssh-remoto-configuracao.md":
-        return "20_ssh_remoto_configuracao.md"
         
     return old_name
 
@@ -148,7 +168,7 @@ def main():
     renames = {}
     for f in md_files:
         filename = f.name
-        new_filename = normalize_filename(filename)
+        new_filename = normalize_filename(vault_path.name, filename)
         if new_filename != filename:
             renames[filename] = new_filename
 

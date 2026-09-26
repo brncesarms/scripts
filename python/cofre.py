@@ -20,7 +20,10 @@ import getpass
 import argparse
 from datetime import datetime
 
-KEY_FILE = os.path.expanduser(os.environ.get("COFRE_KEY", "~/.config/cofre/cofre.key"))
+_def_key = os.path.expanduser("~/.config/cofre/cofre.key")
+if not os.path.exists(_def_key) and os.path.exists("/home/brn/.config/cofre/cofre.key"):
+    _def_key = "/home/brn/.config/cofre/cofre.key"
+KEY_FILE = os.path.expanduser(os.environ.get("COFRE_KEY", _def_key))
 VAULT_FILE = os.path.expanduser(os.environ.get("COFRE_FILE", "/home/brn/obsidian/vault-privado/credenciais/cofre.enc"))
 
 

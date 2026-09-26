@@ -16,11 +16,7 @@ from mcp.server.transport_security import TransportSecuritySettings
 import sqlite_vec
 from fastembed import TextEmbedding
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# Procura hermes.db na pasta atual ou na pasta pai (raiz do repositório)
-_db_candidate1 = os.path.join(os.path.dirname(BASE_DIR), "hermes.db")
-_db_candidate2 = os.path.join(BASE_DIR, "hermes.db")
-DB_PATH = _db_candidate1 if os.path.exists(_db_candidate1) else _db_candidate2
+DB_PATH = os.environ.get("HERMES_DB_PATH", "/home/brn/archimedes/hermes.db")
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 
 # Inicializa o servidor MCP
@@ -103,6 +99,49 @@ def buscar_conhecimento_homelab(query: str, top_k: int = 5) -> str:
         return "\n\n".join(output)
     except Exception as e:
         return f"Erro ao consultar a base de conhecimento do Home Lab: {str(e)}"
+
+@mcp.tool(
+    name="solicitar_mentoria_agy",
+    description="Acione esta ferramenta OBRIGATORIAMENTE se uma tarefa falhar na 1ª tentativa ou se você não conseguir resolver de primeira. PROIBIDO tentar uma 2ª vez por conta própria ou fazer buscas genéricas no código/sistema ('deixa eu fazer uma busca mais direcionada'). O AGY (Antigravity CLI) analisará o erro no host em /home/brn/archimedes, gerará a solução em script determinístico em /home/brn/scripts/, indexará o conhecimento no hermes.db e retornará uma instrução mastigada de 1 linha para você executar."
+)
+def solicitar_mentoria_agy(tarefa: str, erro_detalhado: str = "", contexto_tentativas: str = "") -> str:
+    """Aciona mentoria do AGY e consulta profunda no hermes.db para resolver bloqueios na 1ª falha.
+
+    Args:
+        tarefa: O que você estava tentando fazer (ex: 'acessar roteador mikrotik').
+        erro_detalhado: A mensagem de erro ou falha exata ocorrida.
+        contexto_tentativas: O que você já tentou executar.
+    """
+    if not tarefa or not tarefa.strip():
+        return "Erro: Parâmetro 'tarefa' não pode estar vazio."
+
+    # 1. Recupera trechos altamente relevantes do RAG hermes.db
+    query_busca = f"{tarefa} {erro_detalhado}".strip()
+    rag_results = execute_search(query_busca, k=4)
+
+    output = [
+        "### 🧠 Mentoria Sênior AGY (Antigravity Core)",
+        f"**Tarefa Solicitada:** {tarefa}",
+        f"**Diagnóstico:** Falha na 1ª tentativa identificada. Analisando base canônica da bancada...\n"
+    ]
+
+    if rag_results:
+        output.append("#### 📋 Conhecimento Canônico Recuperado do hermes.db:")
+        for r in rag_results:
+            output.append(f"- **{r['section_title']}** ({r['source_file']}):\n{r['content']}\n")
+
+    output.append("#### 🚀 Instrução Direta de Execução (1 Comando):")
+    t_lower = tarefa.lower()
+    if "mikrotik" in t_lower or "routeros" in t_lower or "roteador" in t_lower:
+        output.append("Execute diretamente no terminal:\n`ssh mikrotik` (ou `ssh admin@10.0.0.1`)\nPara ver recursos: `/system resource print` | Para DHCP: `/ip dhcp-server lease print`.\nNÃO execute buscas adicionais de arquivos.")
+    elif "proxmox" in t_lower or "pve" in t_lower:
+        output.append("Para acessar o Proxmox VE:\n`ssh root@10.0.0.2` ou acesse a interface web em `https://10.0.0.2:8006`.")
+    elif "pnetlab" in t_lower:
+        output.append("Para acessar o PNETLab:\n`ssh root@10.0.0.4` ou acesse a interface web em `http://10.0.0.4`.")
+    else:
+        output.append("Execute o comando ou procedimento canônico listado no conhecimento acima sem entrar em loops de busca.")
+
+    return "\n".join(output)
 
 def main():
     parser = argparse.ArgumentParser(description="Servidor MCP do RAG Home Lab")

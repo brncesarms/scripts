@@ -130,7 +130,7 @@ def propagar_hermes_db():
         {
             "name": "GEEKOM A7 MAX",
             "hostname": "geekom-brn",
-            "ips": ["100.100.63.15", "10.0.0.202"],
+            "ips": ["10.0.0.2", "100.100.63.15"],
             "targets": [
                 "/home/brn/hermes/hermes-rag/hermes.db",
                 "/home/brn/archimedes/hermes.db"
@@ -140,7 +140,7 @@ def propagar_hermes_db():
         {
             "name": "ALIENWARE Aurora",
             "hostname": "alienware-brn",
-            "ips": ["100.123.90.64", "10.0.0.216"],
+            "ips": ["10.0.0.216", "100.123.90.64"],
             "targets": [
                 "/home/brn/archimedes/hermes.db"
             ],
@@ -149,13 +149,15 @@ def propagar_hermes_db():
         {
             "name": "ACER Aspire",
             "hostname": "acer-brn",
-            "ips": ["100.119.100.53", "10.0.0.207"],
+            "ips": ["10.0.0.207", "100.119.100.53"],
             "targets": [
                 "/home/brn/archimedes/hermes.db"
             ],
             "post_cmd": None
         }
     ]
+
+    ssh_opts = ["-o", "ConnectTimeout=3", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null"]
 
     print("\n🌐 [RAG REPLICAÇÃO] Replicando hermes.db via Tailscale/LAN para a Tríade...")
     for node in nodes:
@@ -165,7 +167,7 @@ def propagar_hermes_db():
         alive_ip = None
         for ip in node["ips"]:
             res = subprocess.run(
-                ["ssh", "-o", "ConnectTimeout=2", "-o", "BatchMode=yes", f"brn@{ip}", "echo ok"],
+                ["ssh"] + ssh_opts + [f"brn@{ip}", "echo ok"],
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
             )
             if res.returncode == 0:
@@ -179,15 +181,15 @@ def propagar_hermes_db():
         print(f"  🚀 [{node['name']}] Conectado via {alive_ip}. Enviando hermes.db...")
         for tgt in node["targets"]:
             tgt_dir = os.path.dirname(tgt)
-            subprocess.run(["ssh", f"brn@{alive_ip}", f"mkdir -p {tgt_dir}"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            cp_res = subprocess.run(["scp", "-q", DB_PATH, f"brn@{alive_ip}:{tgt}"])
+            subprocess.run(["ssh"] + ssh_opts + [f"brn@{alive_ip}", f"mkdir -p {tgt_dir}"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            cp_res = subprocess.run(["scp", "-q"] + ssh_opts + [DB_PATH, f"brn@{alive_ip}:{tgt}"])
             if cp_res.returncode == 0:
                 print(f"    ✓ Atualizado em '{tgt}'")
             else:
                 print(f"    ❌ Falha ao copiar para '{tgt}'")
 
         if node.get("post_cmd"):
-            subprocess.run(["ssh", f"brn@{alive_ip}", node["post_cmd"]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(["ssh"] + ssh_opts + [f"brn@{alive_ip}", node["post_cmd"]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             print(f"    ✓ Serviço MCP reiniciado no nó {node['name']}.")
 
 

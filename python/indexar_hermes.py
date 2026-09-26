@@ -204,6 +204,7 @@ if __name__ == "__main__":
         # Busca automática em archimedes, obsidian e scripts
         archimedes_dir = "/home/brn/archimedes"
         files = [
+            os.path.join(archimedes_dir, "AGENTS.md"),
             os.path.join(archimedes_dir, "MANUAL_ESTRUTURA_PROJETO.md"),
             os.path.join(archimedes_dir, "README.md")
         ]

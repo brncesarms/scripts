@@ -16,7 +16,7 @@ from mcp.server.transport_security import TransportSecuritySettings
 import sqlite_vec
 from fastembed import TextEmbedding
 
-DB_PATH = os.environ.get("HERMES_DB_PATH", "/home/brn/archimedes/hermes.db")
+DB_PATH = os.environ.get("AGY_DB_PATH", os.environ.get("HERMES_DB_PATH", "/home/brn/archimedes/agy.db"))
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 
 # Inicializa o servidor MCP
@@ -72,7 +72,7 @@ def execute_search(query: str, k: int = 5) -> List[Dict[str, Any]]:
 
 @mcp.tool(
     name="buscar_conhecimento_homelab",
-    description="Ferramenta PRINCIPAL e MANDATÓRIA de busca semântica no banco vetorial hermes.db. SEMPRE chame esta ferramenta ANTES de tentar ler arquivos do disco ou executar ações na infraestrutura da Tríade. Retorna comandos exatos MikroTik RouterOS v7, inventário de nós/IPs da Tríade, scripts prontos da toolbox ~/scripts/, procedimentos SSH, Proxmox, regras de governança e credenciais em menos de 0.03s."
+    description="Ferramenta PRINCIPAL e MANDATÓRIA de busca semântica no banco vetorial agy.db. SEMPRE chame esta ferramenta ANTES de tentar ler arquivos do disco ou executar ações na infraestrutura da Tríade. Retorna comandos exatos MikroTik RouterOS v7, inventário de nós/IPs da Tríade, scripts prontos da toolbox ~/scripts/, procedimentos SSH, Proxmox, regras de governança e credenciais em menos de 0.03s."
 )
 def buscar_conhecimento_homelab(query: str, top_k: int = 5) -> str:
     """Busca trechos relevantes na base de conhecimento semântica da bancada.

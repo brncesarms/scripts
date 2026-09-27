@@ -115,6 +115,21 @@ def solicitar_mentoria_agy(tarefa: str, erro_detalhado: str = "", contexto_tenta
     if not tarefa or not tarefa.strip():
         return "Erro: Parâmetro 'tarefa' não pode estar vazio."
 
+    # Registra a solicitação de mentoria no log de auditoria do AGY
+    try:
+        import json
+        from datetime import datetime
+        log_entry = {
+            "timestamp": datetime.now().isoformat(),
+            "tarefa": tarefa.strip(),
+            "erro_detalhado": erro_detalhado.strip(),
+            "contexto_tentativas": contexto_tentativas.strip()
+        }
+        with open("/home/brn/archimedes/solicitacoes_mentoria_agy.jsonl", "a", encoding="utf-8") as f:
+            f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
+    except Exception:
+        pass
+
     # 1. Recupera trechos altamente relevantes do RAG hermes.db
     query_busca = f"{tarefa} {erro_detalhado}".strip()
     rag_results = execute_search(query_busca, k=4)
@@ -122,7 +137,8 @@ def solicitar_mentoria_agy(tarefa: str, erro_detalhado: str = "", contexto_tenta
     output = [
         "### 🧠 Mentoria Sênior AGY (Antigravity Core)",
         f"**Tarefa Solicitada:** {tarefa}",
-        f"**Diagnóstico:** Falha na 1ª tentativa identificada. Analisando base canônica da bancada...\n"
+        f"**Diagnóstico:** Mentoria acionada e registrada em `/home/brn/archimedes/solicitacoes_mentoria_agy.jsonl`.",
+        "Analisando conhecimento canônico da bancada no hermes.db...\n"
     ]
 
     if rag_results:
@@ -134,6 +150,10 @@ def solicitar_mentoria_agy(tarefa: str, erro_detalhado: str = "", contexto_tenta
     t_lower = tarefa.lower()
     if "mikrotik" in t_lower or "routeros" in t_lower or "roteador" in t_lower:
         output.append("Execute diretamente no terminal:\n`ssh mikrotik` (ou `ssh admin@10.0.0.1`)\nPara ver recursos: `/system resource print` | Para DHCP: `/ip dhcp-server lease print`.\nNÃO execute buscas adicionais de arquivos.")
+    elif "desligar" in t_lower and "acer" in t_lower:
+        output.append("Execute diretamente o script oficial homologado:\n`/home/brn/scripts/bash/desligar_acer_remoto.sh`\n(Ou: `echo \"$(cofre get sudo_acer)\" | ssh acer \"sudo -S poweroff\"`). NÃO crie scripts novos.")
+    elif "desligar" in t_lower and "geekom" in t_lower:
+        output.append("Execute diretamente no terminal:\n`echo \"$(cofre get sudo_geekom)\" | ssh geekom \"sudo -S poweroff\"`.\nNÃO crie scripts novos.")
     elif "proxmox" in t_lower or "pve" in t_lower:
         output.append("Para acessar o Proxmox VE:\n`ssh root@10.0.0.2` ou acesse a interface web em `https://10.0.0.2:8006`.")
     elif "pnetlab" in t_lower:

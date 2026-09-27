@@ -75,6 +75,40 @@ def chunk_markdown(file_path):
             
     return chunks
 
+def chunk_script(file_path):
+    """Fatia scripts (.sh, .py, .ps1) extraindo cabeçalho, propósito e conteúdo executável."""
+    try:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            content = f.read()
+    except Exception:
+        return []
+
+    if len(content.strip()) < 20:
+        return []
+
+    rel_path = os.path.relpath(file_path, "/home/brn")
+    script_name = os.path.basename(file_path)
+
+    lines = content.strip().split("\n")
+    header_lines = []
+    for l in lines[:30]:
+        s = l.strip()
+        if s.startswith("#") or s.startswith('"""') or s.startswith("'''") or s.startswith("<#") or s.startswith("#>"):
+            header_lines.append(l)
+
+    header_desc = "\n".join(header_lines).strip()
+    title = f"Toolbox Script: ~/{rel_path}"
+    tokens_count = max(1, len(content) // 4)
+
+    # Para scripts curtos (até 120 linhas), indexa o arquivo completo
+    # Para scripts maiores, indexa o cabeçalho descritivo + primeiros blocos
+    if len(lines) <= 120:
+        body = f"# Script Executável: /home/brn/{rel_path}\n# Nome: {script_name}\n\n{content}"
+    else:
+        body = f"# Script Executável: /home/brn/{rel_path}\n# Nome: {script_name}\n{header_desc}\n\n```\n" + "\n".join(lines[:60]) + "\n...\n```"
+
+    return [(f"scripts/{os.path.basename(rel_path)}", title, body, tokens_count)]
+
 def index_files(file_paths):
     """Gera embeddings locais e indexa no hermes.db."""
     valid_paths = [os.path.abspath(fp) for fp in file_paths if os.path.exists(fp)]
@@ -91,9 +125,15 @@ def index_files(file_paths):
     
     all_chunks = []
     for fp in valid_paths:
-        chunks = chunk_markdown(fp)
+        if fp.endswith(".md"):
+            chunks = chunk_markdown(fp)
+        elif fp.endswith((".sh", ".py", ".ps1")):
+            chunks = chunk_script(fp)
+        else:
+            chunks = []
         all_chunks.extend(chunks)
-        print(f"📄 [RAG] Processado '{os.path.basename(fp)}': {len(chunks)} seções fatiadas.")
+        if chunks:
+            print(f"📄 [RAG] Processado '{os.path.basename(fp)}': {len(chunks)} chunk(s).")
             
     if not all_chunks:
         print("🟡 [RAG] Nenhum chunk para indexar.")
@@ -219,14 +259,14 @@ if __name__ == "__main__":
                     if fname.endswith(".md"):
                         files.append(os.path.join(root, fname))
 
-        # Inclui documentações da toolbox de automação (/home/brn/scripts)
+        # Inclui documentações e scripts executáveis da toolbox de automação (/home/brn/scripts)
         scripts_dir = "/home/brn/scripts"
         if os.path.exists(scripts_dir):
             for root, _, fnames in os.walk(scripts_dir):
-                if "/.git" in root:
+                if "/.git" in root or "/__pycache__" in root or "/.venv" in root:
                     continue
                 for fname in fnames:
-                    if fname.endswith(".md"):
+                    if fname.endswith((".md", ".sh", ".py", ".ps1")):
                         files.append(os.path.join(root, fname))
         
         # Filtra apenas os que existem

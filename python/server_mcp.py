@@ -72,13 +72,13 @@ def execute_search(query: str, k: int = 5) -> List[Dict[str, Any]]:
 
 @mcp.tool(
     name="buscar_conhecimento_homelab",
-    description="Consulta o RAG semântico da bancada para recuperar comandos MikroTik, Proxmox VE, inventário de nós, IPs, procedimentos SSH, regras de automação e credenciais."
+    description="Ferramenta PRINCIPAL e MANDATÓRIA de busca semântica no banco vetorial hermes.db. SEMPRE chame esta ferramenta ANTES de tentar ler arquivos do disco ou executar ações na infraestrutura da Tríade. Retorna comandos exatos MikroTik RouterOS v7, inventário de nós/IPs da Tríade, scripts prontos da toolbox ~/scripts/, procedimentos SSH, Proxmox, regras de governança e credenciais em menos de 0.03s."
 )
 def buscar_conhecimento_homelab(query: str, top_k: int = 5) -> str:
     """Busca trechos relevantes na base de conhecimento semântica da bancada.
 
     Args:
-        query: Pergunta ou termo a ser pesquisado (ex: 'comandos mikrotik', 'desligamento proxmox', 'ips bancada').
+        query: Pergunta ou termo a ser pesquisado (ex: 'comandos mikrotik', 'desligar acer', 'ips bancada').
         top_k: Número máximo de trechos relevantes a retornar (padrão: 5).
     """
     if not query or not query.strip():

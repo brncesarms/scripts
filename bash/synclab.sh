@@ -103,9 +103,10 @@ sync_remote_node() {
 
     # Testar conectividade (primeiro Tailscale, depois LAN)
     local target_ip=""
-    if ssh -o ConnectTimeout=2 -o BatchMode=yes "brn@${node_ip_tailscale}" "echo ok" >/dev/null 2>&1; then
+    local ssh_opts="-o ConnectTimeout=3 -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+    if ssh $ssh_opts "brn@${node_ip_tailscale}" "echo ok" >/dev/null 2>&1; then
         target_ip="${node_ip_tailscale}"
-    elif ssh -o ConnectTimeout=2 -o BatchMode=yes "brn@${node_ip_lan}" "echo ok" >/dev/null 2>&1; then
+    elif ssh $ssh_opts "brn@${node_ip_lan}" "echo ok" >/dev/null 2>&1; then
         target_ip="${node_ip_lan}"
     fi
 
@@ -115,7 +116,7 @@ sync_remote_node() {
     fi
 
     echo -e "  Conectado via ${C_CYAN}${target_ip}${C_RESET}. Disparando synclab..."
-    ssh -o ConnectTimeout=5 "brn@${target_ip}" "/home/brn/scripts/bash/synclab.sh --local"
+    ssh $ssh_opts "brn@${target_ip}" "/home/brn/scripts/bash/synclab.sh --local"
     echo -e "  ${C_GREEN}✓ Nó ${node_name} sincronizado com sucesso!${C_RESET}\n"
 }
 
@@ -137,7 +138,7 @@ if [ "$MODE" = "all" ]; then
 
     # Se não formos o Geekom, sincronizar o Geekom
     if [[ "$HOSTNAME_CURRENT" != *"geekom"* ]]; then
-        sync_remote_node "GEEKOM A7 MAX" "100.100.63.15" "10.0.0.202"
+        sync_remote_node "GEEKOM A7 MAX" "100.100.63.15" "10.0.0.2"
     fi
 
     # Se não formos o Alienware, sincronizar o Alienware

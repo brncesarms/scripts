@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-buscar_agy.py - Busca semântica rápida no agy.db (RAG Nativo da Bancada)
+buscar_agy.py - Busca semântica rápida no archimedes.db (RAG Nativo da Bancada)
 Uso: python3 /home/brn/scripts/python/buscar_agy.py "como desligar o proxmox"
 """
 import sys
@@ -23,7 +23,15 @@ import sqlite3
 import sqlite_vec
 from fastembed import TextEmbedding
 
-DB_PATH = os.environ.get("AGY_DB_PATH", os.environ.get("HERMES_DB_PATH", "/home/brn/archimedes/agy.db"))
+DB_PATH = os.environ.get("AGY_DB_PATH", "")
+if not DB_PATH or not os.path.exists(DB_PATH):
+    for candidate in ["/home/brn/archimedes/agy.db", "/home/brn/scripts/python/agy.db", "/home/brn/archimedes/archimedes.db"]:
+        if os.path.exists(candidate):
+            DB_PATH = candidate
+            break
+if not DB_PATH:
+    DB_PATH = "/home/brn/archimedes/agy.db"
+
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 
 def search(query, k=3):

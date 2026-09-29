@@ -23,14 +23,14 @@ import sqlite3
 import sqlite_vec
 from fastembed import TextEmbedding
 
-DB_PATH = os.environ.get("AGY_DB_PATH", "")
+DB_PATH = os.environ.get("ARCHIMEDES_DB_PATH", os.environ.get("AGY_DB_PATH", ""))
 if not DB_PATH or not os.path.exists(DB_PATH):
-    for candidate in ["/home/brn/archimedes/agy.db", "/home/brn/scripts/python/agy.db", "/home/brn/archimedes/archimedes.db"]:
+    for candidate in ["/home/brn/archimedes/archimedes.db", "/home/brn/scripts/python/archimedes.db", "/home/brn/archimedes/agy.db"]:
         if os.path.exists(candidate):
             DB_PATH = candidate
             break
 if not DB_PATH:
-    DB_PATH = "/home/brn/archimedes/agy.db"
+    DB_PATH = "/home/brn/archimedes/archimedes.db"
 
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     res = search(q)
     
     if not res:
-        print(f"🟡 [RAG] Nenhum resultado encontrado para: '{q}'. Verifique se o banco agy.db foi indexado.")
+        print(f"🟡 [RAG] Nenhum resultado encontrado para: '{q}'. Verifique se o banco archimedes.db foi indexado.")
         sys.exit(0)
         
     print(f"🔍 [RAG RESULTADOS PARA: '{q}']\n")

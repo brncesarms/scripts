@@ -25,7 +25,7 @@ import sqlite_vec
 from fastembed import TextEmbedding
 
 # Caminhos padrão
-DB_PATH = os.environ.get("AGY_DB_PATH", os.environ.get("HERMES_DB_PATH", "/home/brn/archimedes/agy.db"))
+DB_PATH = os.environ.get("ARCHIMEDES_DB_PATH", os.environ.get("AGY_DB_PATH", os.environ.get("HERMES_DB_PATH", "/home/brn/archimedes/archimedes.db")))
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 
 def init_db(conn):
@@ -187,9 +187,9 @@ def propagar_agy_db():
             "hostname": "geekom-brn",
             "ips": ["10.0.0.2", "100.100.63.15"],
             "targets": [
-                "/home/brn/archimedes/agy.db",
-                "/home/brn/agy/agy-rag/agy.db",
-                "/home/brn/hermes/hermes-rag/hermes.db"
+            "targets": [
+                "/home/brn/archimedes/archimedes.db",
+                "/home/brn/scripts/python/archimedes.db"
             ],
             "post_cmd": "systemctl --user restart agy-rag-mcp.service || systemctl --user restart hermes-rag-mcp.service"
         },
@@ -198,7 +198,7 @@ def propagar_agy_db():
             "hostname": "alienware-brn",
             "ips": ["10.0.0.216", "100.123.90.64"],
             "targets": [
-                "/home/brn/archimedes/agy.db"
+                "/home/brn/archimedes/archimedes.db"
             ],
             "post_cmd": None
         },
@@ -207,7 +207,7 @@ def propagar_agy_db():
             "hostname": "acer-brn",
             "ips": ["10.0.0.207", "100.119.100.53"],
             "targets": [
-                "/home/brn/archimedes/agy.db"
+                "/home/brn/archimedes/archimedes.db"
             ],
             "post_cmd": None
         }
@@ -215,7 +215,7 @@ def propagar_agy_db():
 
     ssh_opts = ["-o", "ConnectTimeout=3", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null"]
 
-    print("\n🌐 [RAG REPLICAÇÃO] Replicando agy.db via Tailscale/LAN para a Tríade...")
+    print("\n🌐 [RAG REPLICAÇÃO] Replicando archimedes.db via Tailscale/LAN para a Tríade...")
     for node in nodes:
         if node["hostname"] in hostname:
             continue

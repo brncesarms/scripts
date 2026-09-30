@@ -102,10 +102,10 @@ def buscar_conhecimento_homelab(query: str, top_k: int = 5) -> str:
 
 @mcp.tool(
     name="solicitar_mentoria_agy",
-    description="Acione esta ferramenta OBRIGATORIAMENTE se uma tarefa falhar na 1ª tentativa ou se você não conseguir resolver de primeira. PROIBIDO tentar uma 2ª vez por conta própria ou fazer buscas genéricas no código/sistema ('deixa eu fazer uma busca mais direcionada'). O AGY (Antigravity CLI) analisará o erro no host em /home/brn/archimedes, gerará a solução em script determinístico em /home/brn/scripts/, indexará o conhecimento no hermes.db e retornará uma instrução mastigada de 1 linha para você executar."
+    description="Acione esta ferramenta OBRIGATORIAMENTE se uma tarefa falhar na 1ª tentativa ou se você não conseguir resolver de primeira. PROIBIDO tentar uma 2ª vez por conta própria ou fazer buscas genéricas no código/sistema ('deixa eu fazer uma busca mais direcionada'). O AGY (Antigravity CLI) analisará o erro no host em /home/brn/archimedes, gerará a solução em script determinístico em /home/brn/scripts/, indexará o conhecimento no archimedes.db e retornará uma instrução mastigada de 1 linha para você executar."
 )
 def solicitar_mentoria_agy(tarefa: str, erro_detalhado: str = "", contexto_tentativas: str = "") -> str:
-    """Aciona mentoria do AGY e consulta profunda no hermes.db para resolver bloqueios na 1ª falha.
+    """Aciona mentoria do AGY e consulta profunda no archimedes.db para resolver bloqueios na 1ª falha.
 
     Args:
         tarefa: O que você estava tentando fazer (ex: 'acessar roteador mikrotik').
@@ -130,7 +130,7 @@ def solicitar_mentoria_agy(tarefa: str, erro_detalhado: str = "", contexto_tenta
     except Exception:
         pass
 
-    # 1. Recupera trechos altamente relevantes do RAG hermes.db
+    # 1. Recupera trechos altamente relevantes do RAG archimedes.db
     query_busca = f"{tarefa} {erro_detalhado}".strip()
     rag_results = execute_search(query_busca, k=4)
 
@@ -138,11 +138,11 @@ def solicitar_mentoria_agy(tarefa: str, erro_detalhado: str = "", contexto_tenta
         "### 🧠 Mentoria Sênior AGY (Antigravity Core)",
         f"**Tarefa Solicitada:** {tarefa}",
         f"**Diagnóstico:** Mentoria acionada e registrada em `/home/brn/archimedes/solicitacoes_mentoria_agy.jsonl`.",
-        "Analisando conhecimento canônico da bancada no hermes.db...\n"
+        "Analisando conhecimento canônico da bancada no archimedes.db...\n"
     ]
 
     if rag_results:
-        output.append("#### 📋 Conhecimento Canônico Recuperado do hermes.db:")
+        output.append("#### 📋 Conhecimento Canônico Recuperado do archimedes.db:")
         for r in rag_results:
             output.append(f"- **{r['section_title']}** ({r['source_file']}):\n{r['content']}\n")
 

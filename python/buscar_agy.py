@@ -9,7 +9,6 @@ import os
 # Auto-elevação para o ambiente virtual .venv se não estiver ativo
 _venv_candidates = [
     "/home/brn/archimedes/.venv/bin/python3",
-    "/home/brn/hermes/hermes-rag/venv/bin/python3",
 ]
 _venv_python = next((p for p in _venv_candidates if os.path.exists(p)), None)
 if _venv_python and sys.executable != _venv_python:

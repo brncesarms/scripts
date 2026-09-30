@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-indexar_agy.py - Indexador RAG Nativo para o agy.db
+indexar_agy.py - Indexador RAG Nativo para o archimedes.db
 Usa sqlite-vec + fastembed (100% local, zero APIs externas).
 """
 import os
@@ -10,7 +10,6 @@ import sys
 # Auto-elevação para o ambiente virtual .venv se não estiver ativo
 _venv_candidates = [
     "/home/brn/archimedes/.venv/bin/python3",
-    "/home/brn/hermes/hermes-rag/venv/bin/python3",
 ]
 _venv_python = next((p for p in _venv_candidates if os.path.exists(p)), None)
 if _venv_python and sys.executable != _venv_python:
@@ -186,7 +185,6 @@ def propagar_agy_db():
             "name": "GEEKOM A7 MAX",
             "hostname": "geekom-brn",
             "ips": ["10.0.0.2", "100.100.63.15"],
-            "targets": [
             "targets": [
                 "/home/brn/archimedes/archimedes.db",
                 "/home/brn/scripts/python/archimedes.db"

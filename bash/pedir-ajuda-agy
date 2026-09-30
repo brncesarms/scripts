@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Wrapper executável para pedir_ajuda_agy.py
+exec python3 /home/brn/scripts/python/pedir_ajuda_agy.py "$@"

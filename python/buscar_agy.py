@@ -8,6 +8,8 @@ import os
 
 # Auto-elevação para o ambiente virtual .venv se não estiver ativo
 _venv_candidates = [
+    "/home/brn/estagiario/scripts/python/.venv/bin/python3",
+    "/home/brn/scripts/python/.venv/bin/python3",
     "/home/brn/archimedes/.venv/bin/python3",
 ]
 _venv_python = next((p for p in _venv_candidates if os.path.exists(p)), None)
@@ -16,7 +18,8 @@ if _venv_python and sys.executable != _venv_python:
         import sqlite_vec
         import fastembed
     except ImportError:
-        os.execv(_venv_python, [_venv_python] + sys.argv)
+        _args = sys.orig_argv[1:] if hasattr(sys, "orig_argv") else sys.argv
+        os.execv(_venv_python, [_venv_python] + _args)
 
 import sqlite3
 import sqlite_vec
@@ -24,10 +27,16 @@ from fastembed import TextEmbedding
 
 DB_PATH = os.environ.get("ARCHIMEDES_DB_PATH", os.environ.get("AGY_DB_PATH", ""))
 if not DB_PATH or not os.path.exists(DB_PATH):
-    for candidate in ["/home/brn/archimedes/archimedes.db", "/home/brn/scripts/python/archimedes.db", "/home/brn/archimedes/agy.db"]:
-        if os.path.exists(candidate):
-            DB_PATH = candidate
-            break
+    cwd_estagiario_db = os.path.join(os.getcwd(), "estagiario.db")
+    if os.path.exists(cwd_estagiario_db):
+        DB_PATH = cwd_estagiario_db
+    elif os.getcwd().startswith("/home/brn/estagiario") and os.path.exists("/home/brn/estagiario/estagiario.db"):
+        DB_PATH = "/home/brn/estagiario/estagiario.db"
+    else:
+        for candidate in ["/home/brn/archimedes/archimedes.db", "/home/brn/scripts/python/archimedes.db", "/home/brn/archimedes/agy.db"]:
+            if os.path.exists(candidate):
+                DB_PATH = candidate
+                break
 if not DB_PATH:
     DB_PATH = "/home/brn/archimedes/archimedes.db"
 

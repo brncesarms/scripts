@@ -9,6 +9,8 @@ import sys
 
 # Auto-elevação para o ambiente virtual .venv se não estiver ativo
 _venv_candidates = [
+    "/home/brn/estagiario/scripts/python/.venv/bin/python3",
+    "/home/brn/scripts/python/.venv/bin/python3",
     "/home/brn/archimedes/.venv/bin/python3",
 ]
 _venv_python = next((p for p in _venv_candidates if os.path.exists(p)), None)
@@ -17,14 +19,21 @@ if _venv_python and sys.executable != _venv_python:
         import sqlite_vec
         import fastembed
     except ImportError:
-        os.execv(_venv_python, [_venv_python] + sys.argv)
+        _args = sys.orig_argv[1:] if hasattr(sys, "orig_argv") else sys.argv
+        os.execv(_venv_python, [_venv_python] + _args)
 
 import sqlite3
 import sqlite_vec
 from fastembed import TextEmbedding
 
-# Caminhos padrão
-DB_PATH = os.environ.get("ARCHIMEDES_DB_PATH", os.environ.get("AGY_DB_PATH", os.environ.get("HERMES_DB_PATH", "/home/brn/archimedes/archimedes.db")))
+# Caminhos padrão com isolamento de sandbox (Estagiário)
+DB_PATH = os.environ.get("ARCHIMEDES_DB_PATH", os.environ.get("AGY_DB_PATH", os.environ.get("HERMES_DB_PATH", "")))
+if not DB_PATH:
+    cwd_estagiario_db = os.path.join(os.getcwd(), "estagiario.db")
+    if os.path.exists(cwd_estagiario_db) or os.getcwd().startswith("/home/brn/estagiario"):
+        DB_PATH = "/home/brn/estagiario/estagiario.db"
+    else:
+        DB_PATH = "/home/brn/archimedes/archimedes.db"
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 
 def init_db(conn):
